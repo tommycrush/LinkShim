@@ -15,34 +15,40 @@ class HashHandler(tornado.web.RedirectHandler):
     def initialize(self, cache, admin_token):
         self.cache = cache
         self.admin_token = admin_token
+        self.life_of_hash = 60*60*6
     
     def get(self):
+        #simple admin check. Best to move this endpoint to an internal IP for security on production
         if self.get_argument("admin_token") != self.admin_token:
             self.write({"error":1,"errorMsg":"Are you the admin?"})
             return 1
-        
+
+        #get the number of hashes they want. Default to 10.
         num = int(self.get_argument("num",10))
         if num > 1000000000000:
             self.write({"error":1,"errorMsg":"No more than 100 at a time, please."})
             return 1
+
         
-        expiration = int(time.mktime(time.gmtime())) + (60*60*6)
+        expiration = int(time.mktime(time.gmtime())) + self.life_of_hash
         tokens = []
         for i in range(num):
-            token = self.generateToken()
+            #create token and add it to the database
+            token = self.generateRandomToken()
             self.cache.zadd("linkshim:hashes", expiration, token)
             tokens.append(token)
 
         self.write({"error":0,"tokens": tokens,"expiration":expiration})
         return 1
 
-    def generateToken(self, size=25, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
+    
+    def generateRandomToken(self, size=25, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
         return "".join(random.choice(chars) for x in range(size))
 
 
 
 
-#Handle requests to /r
+#Handle requests to redirect
 class RedirectHandler(tornado.web.RequestHandler):
     def initialize(self, cache, templates_dir):
         self.cache = cache
@@ -53,7 +59,6 @@ class RedirectHandler(tornado.web.RequestHandler):
         
         current_timestamp = int(time.mktime(time.gmtime()))
         
-        
         #add the url to today's set
         today = datetime.date.today().strftime("%Y-%m-%d")
         self.cache.zincrby("linkshim:outbound:" + today , href, 1)
@@ -62,14 +67,16 @@ class RedirectHandler(tornado.web.RequestHandler):
         domain = self.getDomain(href)
         ismember = self.cache.sismember("linkshim:watchlist",domain)
         
-        #it is in the watchlist
+        #if it is in the watchlist, lets totally block that domain by displaying watchlist.html
         if ismember:
             self.writeConfirmationMessage("watchlist.html",href)
             return 1
 
-        #check the validity of the hash
+        #get expiration of the hash provided
         h = str(self.get_argument("h"))
         expiration = self.cache.zscore("linkshim:hashes", h)
+        
+        #if hash doesn't exist, or its expired, display the warning message
         if expiration == None or expiration < time.mktime(time.gmtime()):
             self.writeConfirmationMessage("warning.html", href)
             return 1  
@@ -87,9 +94,11 @@ class RedirectHandler(tornado.web.RequestHandler):
 
     #using this rather than a simple header redirect makes the referrer from this page, to protect privacy of the user
     def smartRedirect(self, href):
+        #we set a refresh header just to be safe, but hopefully we won't use it.
         self.set_header("Refresh","1")
         self.set_header("URL", href)
-        
+
+        #IE requires a special solution.
         if self.isIE():
             self.write("<a hef='" + href + "' id='a'></a><script>document.getElementById('a').click();</script>")
         else:
@@ -121,11 +130,18 @@ class RedirectHandler(tornado.web.RequestHandler):
 
 
 
+
+
 if __name__ == "__main__":
+    #connect to redis!
     redis_cache = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+    #change to random string. Strong authentication with IP checks, etc. should be required on production scripts.
     admin_token = "JTCyFFO7OMWRxlnLCp6gp4fcJaLj2234tv3U0AabE7iQ"
     listen_on_port = 8888
-    templates_dir = "/Users/tcrush/Dropbox/Web/GitHubRepos/LinkShim/python"
+
+    #absolute path that our templates are located in
+    templates_dir = "/Users/tommy/Dropbox/Web/GitHubRepos/LinkShim/templates"
     
     application = tornado.web.Application([
         (r"/r", RedirectHandler, dict(cache=redis_cache, templates_dir=templates_dir)),
