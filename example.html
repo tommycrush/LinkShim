@@ -1,0 +1,30 @@
+<doctype html>
+<head>
+	<title>Example Content Page</title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../LinkShim.min.js"></script>
+	<script type="text/javascript">
+		LinkShim.init();
+		LinkShim.addPageParams({
+		    pageVersion: 'a',//great for A/B testing!
+		    hash: '89rc3289cr3r789qx3qc48tjafhp938fhdkfjg398256g',
+		    anyRandomPageVar: '3000'
+		});
+	</script>
+</head>
+
+<body>
+<a data-track="" href="http://www.download.com">This link is outbound, and will be tracked!</a>​
+
+
+<br/><Br/>
+<a data-track="placement=2" href="http://www.download.com">This link will also save placement=2 within redis</a>​
+<br/>
+<a data-track="placement=2&version=2" href="http://www.download.com">This will save placement=2&version=2 as well!</a>​
+
+
+<br/><br/>
+<a href="http://www.download.com">This link is outbound, and will not be tracked!</a>​
+
+
+</body>
