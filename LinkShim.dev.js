@@ -17,7 +17,7 @@ var LinkShim = {
             url += "&" + f + "=" + encodeURIComponent(params[f]);
         }
     
-    //change href of click            
+        //change href of click            
         $a.attr('href', url);
     },
 
