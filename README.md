@@ -33,7 +33,6 @@ It also uses the python (Tornado Framework)[http://www.tornadoweb.org/], a scala
 Download these files, place them where you want, and open l.py. Change the `admin_token` to something random/secure, and `listen_on_port` to the port you want to listen to (duh.)
 
 ### 3. Start er' Up.
-`python server.py` will work for testing. In production, you'll want to use a daemon
 
 ### 4. Create some Hashes
 Have your frontend guys/gals hit `/hash?admin_token=YOUR_TOKEN&num=10` to create some hashes when they need them. By Default, tokens are valid for 6 hours. This endpoint should really be only avaiable internally for security reasons. It's on the same port for now just for the demo. 
