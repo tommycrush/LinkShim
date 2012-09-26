@@ -25,7 +25,7 @@ How to Setup
 This project is meant to be a framework you can use to quickly set a LinkShim. Thus, it is not comprehensive (for example, there is no user specific logging, which would be necessary in production). Follow these steps to setup:
 
 ### 1. Install Redis & Tornado
-LinkShim uses [Redis](http://redis.io), a [NoSQL](http://en.wikipedia.org/wiki/NoSQL) technology, to maintain a spam watchlist, an analtics container, and a set of valid hashes (to prevent becoming an [OpenRedirector](https://www.owasp.org/index.php/Open_redirect))
+LinkShim uses [Redis](http://redis.io), a [NoSQL](http://en.wikipedia.org/wiki/NoSQL) technology, to maintain a spam watchlist, an analytics container, and a set of valid hashes (to prevent becoming an [OpenRedirector](https://www.owasp.org/index.php/Open_redirect))
 
 It also uses the python (Tornado Framework)[http://www.tornadoweb.org/], a scalable, non-blocking web server. I implemented this in python rather than PHP so we can keep settings and database connections open between calls. In redirect engines, speed is of utmost importantance (behind security, of course.)
 
