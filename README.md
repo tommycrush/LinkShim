@@ -38,5 +38,15 @@ Download these files, place them where you want, and open server.py. Change the 
 ### 4. Create some Hashes
 Have your frontend guys/gals hit `/hash?admin_token=YOUR_TOKEN&num=10` to create some hashes when they need them. By Default, tokens are valid for 6 hours. This endpoint should really be only avaiable internally for security reasons. It's on the same port for now just for the demo. 
 
-### 5. Place the Hashes
-Place one of the hashes in JS
+### 5. Include the JS and place the Hashes
+Include the JS Script on your page. Place one of the hashes in JS like so:
+`
+<script type="text/javascript">
+  	LinkShim.init();
+		LinkShim.addPageParams({
+		    pageVersion: 'a',//great for A/B testing!
+		    hash: 'CREATED_HASH',
+		    anyRandomPageVar: '3000'
+		});
+	</script>
+`
