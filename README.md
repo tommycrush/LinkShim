@@ -41,12 +41,12 @@ Have your frontend guys/gals hit `/hash?admin_token=YOUR_TOKEN&num=10` to create
 ### 5. Include the JS and place the Hashes
 Include the JS Script on your page. Place one of the hashes in JS like so:
 `
-<script type="text/javascript">
+<  script type="text/javascript"  >
   	LinkShim.init();
 		LinkShim.addPageParams({
 		    pageVersion: 'a',//great for A/B testing!
 		    hash: 'CREATED_HASH',
 		    anyRandomPageVar: '3000'
 		});
-	</script>
+	</ script >
 `
