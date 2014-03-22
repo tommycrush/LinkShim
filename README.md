@@ -1,3 +1,8 @@
+Notice:
+======
+This is a proof of concept, and not a production-ready script. Use it as a reference.
+
+
 LinkShim
 ========
 
